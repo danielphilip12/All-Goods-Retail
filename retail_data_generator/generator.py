@@ -1177,7 +1177,7 @@ def main() -> None:
         products,
     )
 
-    supplier_delivery = generate_supplier_deliveries(
+    supplier_deliveries = generate_supplier_deliveries(
         supplier_products,
     )
 
@@ -1194,7 +1194,7 @@ def main() -> None:
         "returns": returns,
         "suppliers": suppliers,
         "supplier_products": supplier_products,
-        "supplier_delivery": supplier_delivery,
+        "supplier_deliveries": supplier_deliveries,
     }
 
     save_data(dataframes)

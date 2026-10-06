@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
-OUTPUT_DIR = Path("output")
+OUTPUT_DIR = Path(__file__).parent / "output"
 
 from config import (
     MAX_DISCOUNT_PERCENT,
@@ -45,7 +45,7 @@ def load_data():
     promotions = pd.read_csv(OUTPUT_DIR / "promotions.csv")
     returns = pd.read_csv(OUTPUT_DIR / "returns.csv")
     supplier_deliveries = pd.read_csv(
-        OUTPUT_DIR / "supplier_delivery.csv"
+        OUTPUT_DIR / "supplier_deliveries.csv"
     )
     suppliers = pd.read_csv(OUTPUT_DIR / "suppliers.csv")
     supplier_products = pd.read_csv(
