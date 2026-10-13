@@ -143,3 +143,92 @@ GROUP BY o.used_promotion;
 -- Section 2: Individual Promotion Performance
 -- ===================
 
+-- 1. Which promotions are assoicated with the most orders
+select 
+    promotion_id, 
+    count(*) as total_orders,
+    row_number() over (order by count(*) desc) as "rank"
+from orders
+where promotion_id is not null
+group by promotion_id
+order by 2 desc
+limit 10;
+
+/*
+promotion_id total_orders rank
+PROMO_00054	439	1
+PROMO_00178	266	2
+PROMO_00042	258	3
+PROMO_00070	251	4
+PROMO_00171	231	5
+PROMO_00176	187	6
+PROMO_00002	183	7
+PROMO_00067	180	8
+PROMO_00104	177	9
+PROMO_00099	163	10
+*/
+
+-- 2. Which promotions generate the most revenue
+
+select 
+    promotion_id, 
+    sum(total_price) as total_revenue,
+    row_number() over (order by sum(total_price) desc) as "rank"
+from orders
+where promotion_id is not null
+group by promotion_id
+order by 2 desc
+limit 10;
+
+/*
+promotion_id total_revenue rank
+PROMO_00054	73582.40	1
+PROMO_00178	46450.07	2
+PROMO_00171	41919.58	3
+PROMO_00042	41617.94	4
+PROMO_00070	40864.92	5
+PROMO_00176	31970.76	6
+PROMO_00002	30507.98	7
+PROMO_00067	29565.16	8
+PROMO_00104	29395.72	9
+PROMO_00099	29238.10	10
+*/
+
+-- 3. Which promotions generate the most gross profit
+
+with profit_per_order as (
+select 
+    o.order_id,
+    sum(oi.quantity * (oi.price_per_unit - p.cost)) as gross_profit
+from orders o
+join order_items oi
+on o.order_id = oi.order_id
+left join products p
+on oi.product_id = p.product_id
+group by o.order_id
+)
+select 
+    o.promotion_id, 
+    sum(ppo.gross_profit) as total_gross_profit,
+    row_number() over (order by sum(ppo.gross_profit) desc) as "rank"
+from orders o
+join profit_per_order ppo
+on o.order_id = ppo.order_id
+where o.promotion_id is not null
+group by promotion_id
+order by 2 desc
+limit 10;
+
+/*
+promotion_id total_gross_profit rank
+PROMO_00054	23149.63	1
+PROMO_00178	13164.85	2
+PROMO_00171	12854.90	3
+PROMO_00042	12799.45	4
+PROMO_00070	11096.04	5
+PROMO_00002	9627.75	6
+PROMO_00176	9245.48	7
+PROMO_00170	9051.63	8
+PROMO_00067	9009.51	9
+PROMO_00099	8944.74	10
+*/
