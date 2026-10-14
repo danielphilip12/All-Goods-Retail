@@ -1,3 +1,4 @@
+-- Active: 1791309856637@@localhost@5432
 select * 
 from promotions
 limit 5;
@@ -232,3 +233,118 @@ PROMO_00170	9051.63	8
 PROMO_00067	9009.51	9
 PROMO_00099	8944.74	10
 */
+
+-- Average order value by promotion
+
+/*
+ * Explain what we need
+ * 
+ * to get the average order value for each promotion
+ * we need the orders table total_price column and its 
+ * promotion_id. We only need the one table
+ */
+
+select promotion_id, round(avg(totaL_price), 2) as avg_order_value
+from orders
+where promotion_id  is not null
+group by promotion_id 
+order by 2 desc
+limit 10;
+
+/*
+PROMO_00046	404.98
+PROMO_00182	237.28
+PROMO_00161	234.79
+PROMO_00077	227.27
+PROMO_00174	225.62
+PROMO_00100	217.45
+PROMO_00025	214.20
+PROMO_00164	209.85
+PROMO_00150	209.42
+PROMO_00118	200.21
+ */
+
+-- Gross profit margin by promotion
+
+/*
+ * Reusing the gross profit margin code 
+ * from when we did the gross profit margin for each
+ * group (promotion vs non-promotion)
+ * we can modify it to group by promotion id rather than used_promotion 
+ */
+
+WITH profit_by_order AS (
+    SELECT
+        oi.order_id,
+        SUM(
+            oi.quantity * (oi.price_per_unit - p.cost)
+        ) AS gross_profit
+    FROM order_items oi
+    JOIN products p
+        ON oi.product_id = p.product_id
+    GROUP BY oi.order_id
+)
+SELECT
+    o.promotion_id,
+    SUM(o.total_price) AS total_revenue,
+    SUM(pbo.gross_profit) AS total_gross_profit,
+    ROUND(
+        100.0 * SUM(pbo.gross_profit)
+        / NULLIF(SUM(o.total_price), 0),
+        2
+    ) AS gross_profit_margin_percent
+FROM orders o
+JOIN profit_by_order pbo
+    ON o.order_id = pbo.order_id
+where o.promotion_id is not null
+GROUP BY o.promotion_id
+order by 4 desc
+limit 10;
+
+/*
+PROMO_00198	173.55	61.39	35.37
+PROMO_00108	609.01	210.32	34.53
+PROMO_00025	642.59	213.61	33.24
+PROMO_00003	2190.04	726.15	33.16
+PROMO_00136	1811.82	600.66	33.15
+PROMO_00046	404.98	133.38	32.93
+PROMO_00080	7970.99	2621.33	32.89
+PROMO_00015	4625.51	1516.11	32.78
+PROMO_00008	4175.65	1358.17	32.53
+PROMO_00007	3204.16	1039.72	32.45
+ */
+
+select * from orders
+where promotion_id = 'PROMO_00198';
+
+
+
+WITH profit_by_order AS (
+    SELECT
+        oi.order_id,
+        SUM(
+            oi.quantity * (oi.price_per_unit - p.cost)
+        ) AS gross_profit
+    FROM order_items oi
+    JOIN products p
+        ON oi.product_id = p.product_id
+    GROUP BY oi.order_id
+)
+SELECT
+    o.promotion_id,
+    COUNT(o.order_id) as total_orders,
+    SUM(o.total_price) AS total_revenue,
+    SUM(pbo.gross_profit) AS total_gross_profit,
+    round(avg(o.totaL_price), 2) as avg_order_value,
+    ROUND(
+        100.0 * SUM(pbo.gross_profit)
+        / NULLIF(SUM(o.total_price), 0),
+        2
+    ) AS gross_profit_margin_percent
+FROM orders o
+JOIN profit_by_order pbo
+    ON o.order_id = pbo.order_id
+where o.promotion_id is not null
+GROUP BY o.promotion_id
+having COUNT(o.order_id) > 20
+ORDER BY total_gross_profit desc ;
