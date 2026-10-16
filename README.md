@@ -245,3 +245,58 @@ AllGoodsRetail/
 ## Purpose
 
 This project is intended to demonstrate the ability to work through a realistic data workflow from **raw/generated data to a validated relational database and business analysis**, rather than focusing solely on individual analytical queries or visualizations.
+
+
+## Project Startup
+
+Follow these steps to generate, validate, and load the synthetic retail data into PostgreSQL.
+
+### 1. Configure environment variables
+
+Create a `.env` file in the project root, using `.env.example` as a guide for the required environment variables.
+
+### 2. Build the Python environment
+
+Run the following command to build the Python Docker image:
+
+```bash
+docker compose build python
+```
+
+### 3. Start the Docker containers
+
+Run the following command to start the services defined in `docker-compose.yml`:
+
+```bash
+docker compose up -d
+```
+
+### 4. Generate the synthetic data
+
+Run the following command to generate the synthetic retail data:
+
+```bash
+docker compose run --rm python python retail_data_generator/generator.py
+```
+
+This generates the CSV files used to populate the PostgreSQL database.
+
+### 5. Validate the synthetic data
+
+Run the following command to validate the generated CSV files:
+
+```bash
+docker compose run --rm python python retail_data_generator/validate.py
+```
+
+This checks the generated data against the project's validation rules. **Ensure validation passes before proceeding to the next step.**
+
+### 6. Load the data into PostgreSQL
+
+Run the following command to load the generated data into the database:
+
+```bash
+docker compose run --rm python python etl/load_data.py
+```
+
+This connects to the PostgreSQL database and loads the CSV data into the corresponding tables.

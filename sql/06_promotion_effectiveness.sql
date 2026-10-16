@@ -1,4 +1,4 @@
--- Active: 1791309856637@@localhost@5432
+-- Active: 1792176784882@@localhost@5432@allgoods_db
 select * 
 from promotions
 limit 5;
