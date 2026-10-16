@@ -64,7 +64,7 @@ from returns;
 select sum(refund_amount) as total_refunded_amount
 from returns;
 
--- 765909.53
+-- 766142.71
 
 -- 10. Percentage of orders with at least one return
 SELECT
