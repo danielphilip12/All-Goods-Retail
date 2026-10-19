@@ -1,4 +1,4 @@
--- Active: 1792176784882@@localhost@5432
+-- Active: 1791383096862@@localhost@5432@allgoods_db
 
 select * 
 from returns
@@ -167,4 +167,183 @@ PROD_000293	Soy Sauce - 8 oz	306	33	10.78
 /*
 The tuna steaks, which have the highest number of quantity sold (25,217) and the most returns (1,357), has
 a very low return rate of 5.38%. 
+*/
+
+
+-- ====================
+-- Section 3: Category Return Analysis
+-- ====================
+
+-- 1. Which categories have the most returned units?
+select 
+    c.product_category_id,
+    c.name as category_name,
+    sum(r.quantity_returned) as total_quantity_returned
+from returns r
+join order_items oi
+    on r.order_item_id = oi.order_item_id
+join products p
+    on oi.product_id = p.product_id
+join product_categories c
+    on p.product_category_id = c.product_category_id
+group by c.product_category_id, c.name
+order by total_quantity_returned desc, c.product_category_id;
+
+/*
+Seafood has the most returned units at 8407. Top 5 categories by returned units are listed below.
+
+product_category_id	category_name	total_quantity_returned
+CAT_003	Seafood	8407
+CAT_015	Paper Products	7178
+CAT_011	Pasta & Grains	6121
+CAT_008	Snacks	5751
+CAT_005	Bakery	5362
+*/
+
+
+-- 2. Which categories have the highest refund amounts?
+select
+    c.product_category_id,
+    c.name as category_name,
+    sum(r.refund_amount) as total_amount_returned
+from returns r
+join order_items oi
+    on r.order_item_id = oi.order_item_id
+join products p
+    on oi.product_id = p.product_id
+join product_categories c
+    on p.product_category_id = c.product_category_id
+group by c.product_category_id, c.name
+order by total_amount_returned desc, c.product_category_id;
+
+/*
+Seafood has the highest return amount, with a total return value of $130,093.30.
+
+Top 5 categories by return amount are listed below.
+product_category_id	category_name	total_amount_returned
+CAT_003	Seafood	130093.30
+CAT_018	Baby Products	101978.20
+CAT_015	Paper Products	74439.52
+CAT_002	Meat	50326.66
+CAT_016	Personal Care	41084.42
+*/
+
+-- 3. Which categories have the highest return rates?
+with category_sales as (
+    select
+        c.product_category_id,
+        c.name as category_name,
+        sum(oi.quantity) as total_quantity_sold
+    from order_items oi
+    join products p
+        on oi.product_id = p.product_id
+    join product_categories c
+        on p.product_category_id = c.product_category_id
+    group by c.product_category_id, c.name
+),
+category_returns as (
+    select
+        c.product_category_id,
+        sum(r.quantity_returned) as total_quantity_returned
+    from returns r
+    join order_items oi
+        on r.order_item_id = oi.order_item_id
+    join products p
+        on oi.product_id = p.product_id
+    join product_categories c
+        on p.product_category_id = c.product_category_id
+    group by c.product_category_id
+)
+select
+    cs.product_category_id,
+    cs.category_name,
+    cs.total_quantity_sold,
+    coalesce(cr.total_quantity_returned, 0) as total_quantity_returned,
+    round(
+        coalesce(cr.total_quantity_returned, 0) * 100.0
+        / nullif(cs.total_quantity_sold, 0),
+        2
+    ) as return_rate_percentage
+from category_sales cs
+left join category_returns cr
+    on cs.product_category_id = cr.product_category_id
+order by return_rate_percentage desc, total_quantity_returned desc,
+    cs.product_category_id;
+
+/*
+The category with the highest return rate is Paper Products, with a return rate of 6.96%
+
+Top 5 categories by return rate are listed below.
+product_category_id	category_name	total_quantity_sold	total_quantity_returned	return_rate_percentage
+CAT_015	Paper Products	103068	7178	6.96
+CAT_018	Baby Products	78046	5355	6.86
+CAT_017	Pet Supplies	36112	2465	6.83
+CAT_016	Personal Care	74411	5069	6.81
+CAT_014	Household Cleaning	53053	3556	6.70
+*/
+
+-- 4. Paper Products and Baby Products return rates by product.
+with product_sales as (
+    select
+        p.product_id,
+        p.name as product_name,
+        c.product_category_id,
+        c.name as category_name,
+        sum(oi.quantity) as total_quantity_sold
+    from order_items oi
+    join products p
+        on oi.product_id = p.product_id
+    join product_categories c
+        on p.product_category_id = c.product_category_id
+    where c.name in ('Paper Products', 'Baby Products')
+    group by p.product_id, p.name, c.product_category_id, c.name
+),
+product_returns as (
+    select
+        oi.product_id,
+        sum(r.quantity_returned) as total_quantity_returned
+    from returns r
+    join order_items oi
+        on r.order_item_id = oi.order_item_id
+    group by oi.product_id
+)
+select
+    ps.product_category_id,
+    ps.category_name,
+    rank() over (
+        partition by ps.product_category_id
+        order by coalesce(pr.total_quantity_returned, 0) * 100.0
+            / nullif(ps.total_quantity_sold, 0) desc
+    ) as return_rate_rank,
+    ps.product_id,
+    ps.product_name,
+    ps.total_quantity_sold,
+    coalesce(pr.total_quantity_returned, 0) as total_quantity_returned,
+    round(
+        coalesce(pr.total_quantity_returned, 0) * 100.0
+        / nullif(ps.total_quantity_sold, 0),
+        2
+    ) as return_rate_percentage
+from product_sales ps
+left join product_returns pr
+    on ps.product_id = pr.product_id
+order by ps.category_name, return_rate_rank, ps.product_id;
+
+/*
+Top 5 products by return rate within Paper Products and Baby Products categories.
+product_category_id	category_name	return_rate_rank	product_id	product_name	total_quantity_sold	total_quantity_returned	return_rate_percentage
+CAT_018	Baby Products	1	PROD_000190	Baby Diapers - 12 pack	210	33	15.71
+CAT_018	Baby Products	2	PROD_000224	Baby Wipes - Organic	884	99	11.20
+CAT_018	Baby Products	3	PROD_000156	Baby Food Pouches - Reduced Fat	889	88	9.90
+CAT_018	Baby Products	4	PROD_000096	Baby Food Pouches - 2 lb	624	60	9.62
+CAT_018	Baby Products	5	PROD_000006	Baby Wipes - Reduced Fat	408	39	9.56
+
+CAT_015	Paper Products	1	PROD_000879	Trash Bags - 16 oz	61	9	14.75
+CAT_015	Paper Products	2	PROD_000483	Toilet Paper - 6 pack #2	410	48	11.71
+CAT_015	Paper Products	3	PROD_000013	Disposable Plates - 12 oz	351	35	9.97
+CAT_015	Paper Products	4	PROD_000317	Paper Towels - Organic	955	90	9.42
+CAT_015	Paper Products	5	PROD_000398	Trash Bags - Family Size	135	12	8.89
+
+In baby products, baby diapers has the highest return rate among the top 5 products, with a return rate of 15.71%.
+In paper products, trash bags - 16 oz has the highest return rate among the top 5 products, with a return rate of 14.75%.
 */
