@@ -1,4 +1,4 @@
--- Active: 1791383096862@@localhost@5432@allgoods_db
+-- Active: 1791309856637@@localhost@5432@allgoods_db
 
 select * 
 from returns
@@ -346,4 +346,82 @@ CAT_015	Paper Products	5	PROD_000398	Trash Bags - Family Size	135	12	8.89
 
 In baby products, baby diapers has the highest return rate among the top 5 products, with a return rate of 15.71%.
 In paper products, trash bags - 16 oz has the highest return rate among the top 5 products, with a return rate of 14.75%.
+*/
+
+
+-- =======================
+-- Section 4: Business Insights
+-- =======================
+
+-- 1. Seafood
+/*
+The Seafood category has the highest number of returned units and the
+highest total refund amount. However, Seafood also has the highest
+sales volume and revenue, which may help explain its high absolute
+return totals.
+
+Despite its high return volume, Seafood's unit return rate is
+approximately 5%, lower than that of several other categories.
+This suggests that its high return totals may be partly attributable
+to the scale of its sales rather than an unusually high return rate.
+
+Business implication:
+We should evaluate Seafood's returns alongside its gross profit and
+sales performance before deciding whether intervention is necessary.
+
+Limitation:
+The current analysis does not establish whether Seafood's return
+level is financially acceptable. That would require a clearer
+assessment of the profit impact and appropriate business targets.
+*/
+
+-- 2. Paper Products
+/*
+Paper Products has the highest category-level unit return rate at
+6.96%. The five products with the highest return rates in this
+category are Trash Bags - 16 oz, Toilet Paper - 6 pack #2,
+Disposable Plates - 12 oz, Paper Towels - Organic, and Trash Bags -
+Family Size.
+
+Several of these products sold fewer than 500 units in the dataset.
+Trash Bags - 16 oz had 61 units sold and 9 units returned, resulting
+in a 14.75% return rate. Because of its low sales volume, this rate
+should be interpreted cautiously.
+
+Business implication:
+Investigate whether the elevated return rates are concentrated in
+specific products, and examine product details and promotion history
+for possible contributing factors. Adding a return-reason field to
+the database could help distinguish issues such as defects from
+other reasons for returns.
+
+Limitation:
+The current dataset does not contain return reasons, so we cannot
+determine why these products were returned. We also have not
+established that promotions contribute to higher return rates.
+*/
+
+-- 3. Baby Products
+/*
+Baby Products has the second-highest category-level unit return rate
+at 6.86%. The five products with the highest return rates in this
+category are Baby Diapers - 12 pack, Baby Wipes - Organic,
+Baby Food Pouches - Reduced Fat, Baby Food Pouches - 2 lb,
+and Baby Wipes - Reduced Fat.
+
+Baby Diapers - 12 pack had 210 units sold and 33 units returned,
+resulting in a 15.71% return rate. Because of its relatively low
+sales volume, this rate should be interpreted cautiously.
+
+Business implication:
+Investigate whether elevated return rates are concentrated in
+specific products, and examine product details and promotion history
+for possible contributing factors. Adding a return-reason field to
+the database could help distinguish issues such as defects from
+other reasons for returns.
+
+Limitation:
+The current dataset does not contain return reasons, so we cannot
+determine why these products were returned. We also have not
+established that promotions contribute to higher return rates.
 */
