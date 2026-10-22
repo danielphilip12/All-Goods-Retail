@@ -1,4 +1,4 @@
--- Active: 1792176784882@@localhost@5432@allgoods_db
+-- Active: 1792176784882@@localhost@5432
 select *
 from order_items
 limit 5;
@@ -210,8 +210,8 @@ pair_metrics AS (
             / NULLIF(oppa.order_count, 0), 2) AS confidence_a_to_b_percent,
         ROUND(pp.orders_with_both * 100.0
             / NULLIF(oppb.order_count, 0), 2) AS confidence_b_to_a_percent,
-        ROUND((pp.orders_with_both * oto.order_count * 1.0)
-            / NULLIF(oppa.order_count * oppb.order_count, 0), 4) AS lift
+        (pp.orders_with_both * oto.order_count * 1.0)
+            / NULLIF(oppa.order_count * oppb.order_count, 0) AS lift
     FROM product_pairs AS pp
     JOIN products AS pa
         ON pa.product_id = pp.product_a_id
@@ -230,6 +230,7 @@ ranked_by_count AS (
         ) AS count_rank,
         *
     FROM pair_metrics
+    where orders_with_both >= 50
 ),
 ranked_by_lift AS (
     SELECT
@@ -255,7 +256,7 @@ FROM (
         support_percent,
         confidence_a_to_b_percent,
         confidence_b_to_a_percent,
-        lift
+        round(lift, 4) as lift
     FROM ranked_by_count
     WHERE count_rank <= 10
 
@@ -274,7 +275,7 @@ FROM (
         support_percent,
         confidence_a_to_b_percent,
         confidence_b_to_a_percent,
-        lift
+        round(lift, 4) as lift
     FROM ranked_by_lift
     WHERE lift_rank <= 10
 ) AS ranked_pairs
@@ -301,4 +302,41 @@ top_10_by_lift	7	PROD_000057	Deodorant - 24 oz	1428	PROD_000219	Tilapia Fillets 
 top_10_by_lift	8	PROD_000083	2% Milk - 12 pack	3357	PROD_000349	Diced Tomatoes - Organic	1109	60	0.06	1.79	5.41	1.61
 top_10_by_lift	9	PROD_000024	Quinoa - 32 oz	2094	PROD_000220	Disposable Cups - Family Size	1655	55	0.06	2.63	3.32	1.59
 top_10_by_lift	10	PROD_000339	Floor Cleaner - 24 oz	395	PROD_000401	Tuna Steaks - 16 oz #2	8441	53	0.05	13.42	0.63	1.59
+*/
+
+/*
+Business Insights — Product Affinity
+
+1. High co-purchase count does not necessarily indicate a strong association
+
+Tuna Steaks - 16 oz #2 and Lemon Lime Soda - Original had the highest co-purchase count, 
+appearing together in 678 orders. However, their lift was approximately 1.05, 
+meaning they occurred together only about 5% more often than expected based 
+on their individual order frequencies. Although this is the most frequently purchased pair, 
+the relatively low lift suggests that their high co-purchase count may largely 
+reflect their individual popularity rather than a particularly strong association.
+
+Business implication: The business should not assume that bundling these products 
+would substantially increase sales simply because 
+they frequently appear in the same orders. 
+A controlled promotion or further profitability analysis could help 
+determine whether a bundle would be worthwhile.
+
+2. A high lift does not necessarily indicate a commercially valuable opportunity
+
+Atlantic Salmon - 2 lb and Ground Turkey - 1 lb #2 had the highest lift, at approximately 1.69. 
+These products appeared together in 52 orders, meaning they were purchased together about 
+69% more often than expected under an independence assumption. 
+However, this combination appeared in relatively few orders overall, 
+so its potential reach may be limited.
+
+Business implication: This pair could be investigated as a potential targeted 
+cross-selling opportunity, but the limited co-purchase volume does not yet 
+justify investing in a promotion or bundle. 
+Further analysis and testing would be needed to determine whether 
+the association could translate into meaningful sales or profit.
+
+Limitations: These metrics describe observed purchasing patterns; 
+they do not establish causation or prove that a bundle would increase sales. 
+The dataset is synthetic, so the observed associations may not reflect real-world customer behavior.
 */
