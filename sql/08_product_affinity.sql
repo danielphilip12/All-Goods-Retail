@@ -340,3 +340,20 @@ Limitations: These metrics describe observed purchasing patterns;
 they do not establish causation or prove that a bundle would increase sales. 
 The dataset is synthetic, so the observed associations may not reflect real-world customer behavior.
 */
+
+select *
+from promotions
+limit 5;
+
+SELECT 
+    column_name, 
+    data_type,
+    character_maximum_length AS max_length
+FROM 
+    information_schema.columns
+WHERE 
+    table_name = 'promotions'
+    AND table_schema = 'public';
+
+select * from customers
+limit 15;
