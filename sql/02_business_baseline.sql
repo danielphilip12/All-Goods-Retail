@@ -6,7 +6,7 @@ where table_schema = 'public';
 select sum(total_price) as revenue
 from orders;
 
--- 14207762.13
+-- $14,222,427.44
 
 -- 2. total number of orders
 select count(*) as total_orders
@@ -15,7 +15,7 @@ from orders;
 -- 100000
 
 -- 3. Average order value
-SELECT AVG(total_price) AS average_order_value
+SELECT ROUND(AVG(total_price), 2) AS average_order_value
 FROM orders;
 
 -- 142.08
@@ -24,6 +24,7 @@ FROM orders;
 select sum(oi.quantity) as total_quantity
 from order_items oi;
 -- 1652792
+
 -- select p.name, sum(oi.quantity) as total_quantity
 -- from products p
 -- join order_items oi on p.product_id = oi.product_id

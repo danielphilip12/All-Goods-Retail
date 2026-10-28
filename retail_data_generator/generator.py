@@ -77,25 +77,100 @@ def random_datetime(
     start_hour: int | None = None,
     end_hour: int | None = None,
 ) -> datetime:
-    """Return a random datetime between start and end."""
+    """Return a random datetime within the bounds and project period."""
     if start > end:
         raise ValueError("Start datetime cannot be after end datetime.")
 
-    start_seconds = int((start - PROJECT_START_DATE).total_seconds())
-    end_seconds = int((end - PROJECT_START_DATE).total_seconds())
-
-    offset = random.randint(start_seconds, end_seconds)
-    result = PROJECT_START_DATE + timedelta(seconds=offset)
+    bounded_start = max(start, PROJECT_START_DATE)
+    bounded_end = min(end, PROJECT_END_DATE)
+    start_second = int(
+        (bounded_start - PROJECT_START_DATE).total_seconds()
+    )
+    if bounded_start.microsecond:
+        start_second += 1
+    end_second = int(
+        (bounded_end - PROJECT_START_DATE).total_seconds()
+    )
 
     if start_hour is not None and end_hour is not None:
-        result = result.replace(
-            hour=random.randint(start_hour, end_hour),
-            minute=random.randint(0, 59),
-            second=random.randint(0, 59),
-            microsecond=0,
+        if not 0 <= start_hour <= end_hour <= 23:
+            raise ValueError("Order hours must be between 0 and 23.")
+
+        if start_second <= end_second:
+            seconds_per_day = 24 * 60 * 60
+            start_day, _ = divmod(start_second, seconds_per_day)
+            end_day, _ = divmod(end_second, seconds_per_day)
+            first_start = max(
+                start_second,
+                start_day * seconds_per_day + start_hour * 60 * 60,
+            )
+            first_end = min(
+                end_second,
+                start_day * seconds_per_day + (end_hour + 1) * 60 * 60 - 1,
+            )
+
+            if start_day == end_day:
+                if first_start <= first_end:
+                    return PROJECT_START_DATE + timedelta(
+                        seconds=random.randint(first_start, first_end)
+                    )
+            else:
+                last_start = max(
+                    start_second,
+                    end_day * seconds_per_day + start_hour * 60 * 60,
+                )
+                last_end = min(
+                    end_second,
+                    end_day * seconds_per_day
+                    + (end_hour + 1) * 60 * 60
+                    - 1,
+                )
+                first_count = max(0, first_end - first_start + 1)
+                last_count = max(0, last_end - last_start + 1)
+                middle_day_count = max(0, end_day - start_day - 1)
+                seconds_per_middle_day = (
+                    (end_hour - start_hour + 1) * 60 * 60
+                )
+                middle_count = (
+                    middle_day_count * seconds_per_middle_day
+                )
+                allowed_count = first_count + middle_count + last_count
+
+                if allowed_count:
+                    offset = random.randrange(allowed_count)
+                    if offset < first_count:
+                        selected_second = first_start + offset
+                    else:
+                        offset -= first_count
+                        if offset < middle_count:
+                            day_offset, within_day = divmod(
+                                offset,
+                                seconds_per_middle_day,
+                            )
+                            selected_second = (
+                                (start_day + 1 + day_offset)
+                                * seconds_per_day
+                                + start_hour * 60 * 60
+                                + within_day
+                            )
+                        else:
+                            selected_second = (
+                                last_start + offset - middle_count
+                            )
+
+                    return PROJECT_START_DATE + timedelta(
+                        seconds=selected_second
+                    )
+
+    if bounded_start > bounded_end or start_second > end_second:
+        raise ValueError(
+            "Datetime bounds do not contain a whole second "
+            "within the project period."
         )
 
-    return result
+    return PROJECT_START_DATE + timedelta(
+        seconds=random.randrange(start_second, end_second + 1)
+    )
 
 
 def random_date_only(start: datetime, end: datetime) -> datetime:
@@ -727,18 +802,7 @@ def _membership_status_at_order(
 
 
 def _customer_order_window(customer: pd.Series) -> tuple[datetime, datetime]:
-    """
-    Return the valid order window for a customer.
-
-    Customers who become members do not receive generated orders before their
-    membership join date. This keeps the current membership business rule
-    straightforward for the first version of the project.
-    """
-    join_date = customer["membership_join_date"]
-
-    if pd.notna(join_date):
-        return join_date, PROJECT_END_DATE
-
+    """Return the full project order window for every customer."""
     return PROJECT_START_DATE, PROJECT_END_DATE
 
 

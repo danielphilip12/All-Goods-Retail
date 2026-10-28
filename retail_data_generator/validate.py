@@ -808,7 +808,7 @@ def validate_orders(data):
             merged["membership_cancel_date"].isna()
             | (
                 merged["order_date"]
-                < merged["membership_cancel_date"]
+                <= merged["membership_cancel_date"]
             )
         )
     )
@@ -819,6 +819,21 @@ def validate_orders(data):
     ).all(), (
         "Order membership status does not match "
         "customer membership dates"
+    )
+
+    pre_join_orders = merged[
+        merged["membership_join_date"].notna()
+        & (
+            merged["order_date"]
+            < merged["membership_join_date"]
+        )
+    ]
+
+    assert (
+        ~pre_join_orders["is_member"]
+    ).all(), (
+        "Orders before membership join date are marked "
+        "as member orders"
     )
 
 
