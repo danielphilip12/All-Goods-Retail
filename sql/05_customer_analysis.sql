@@ -1,4 +1,4 @@
--- Active: 1791309856637@@localhost@5432
+-- Active: 1792176784882@@localhost@5432@allgoods_db
 CREATE EXTENSION IF NOT EXISTS tablefunc;
 
 -- =======================================
@@ -7,7 +7,7 @@ CREATE EXTENSION IF NOT EXISTS tablefunc;
 select count(DISTINCT customer_id) 
 from customers;
 
--- 10000
+-- 10,000
 
 -- =======================================
 -- 2. Number of active members
@@ -16,7 +16,7 @@ select count(*) as total_members
 from customers
 where is_member = true and membership_cancel_date is NULL;
 
--- 5126
+-- 5,126
 
 -- =======================================
 -- 3. Number of current non-members
@@ -25,7 +25,7 @@ select count(*) as total_non_members
 from customers
 where is_member = false or membership_cancel_date is not NULL;
 
--- 4874
+-- 4,874
 
 -- =======================================
 -- 4. Membership percentage
@@ -96,8 +96,8 @@ from orders
 group by is_member;
 
 /*
-false	143.01
-true	141.36
+false	142.39
+true	141.82
 */
 
 -- =======================================
@@ -113,8 +113,8 @@ from orders_by_customer obc
 group by obc.is_member;
 
 /*
-false	9.1245812395309883
-true	9.4365278474661315
+false	7.52
+true	5.33
 */
 
 
@@ -127,8 +127,8 @@ from orders
 group by is_member;
 
 /*
-false	6232113.11
-true	7975649.02
+false	10,116,998.08
+true	4,105,429.36
 */
 
 
@@ -161,25 +161,67 @@ from revenue_by_customer rbc
 group by rbc.is_member;
 
 /*
-false   1304.8813044388609715
-true	1333.9436394045827061
+false   1070.47
+true	755.93
 */
 
 /*
-Do members appear to be more valuable customers than non-members, based on your results?
-Members appear to be slightly more valuble than non-members. Although there is a sizable difference in 
-generated revenue between membership status, the average order value and average order values
-only slightly differ from each other. 
+=======================================================
+ANALYSIS FINDINGS: CUSTOMER MEMBERSHIP AND SPENDING
+=======================================================
 
+1. Do members appear to be more valuable customers than non-members?
 
-What pattern do you see in monthly membership additions across 2021–2025?
-There do not seem to be any distinct patterns in terms of membership join date. 
-However, this is likely due to the synthetic nature of the data generation,
-as the date were randomly generated, making it likely that 
-no patterns emerges due to randomness. 
+Based on the current results, members do not appear to generate more revenue
+per customer than non-members.
 
+There are 5,126 active members (51.26% of the customer base) and 4,874
+current non-members. The average order value is similar between the two
+groups: $141.82 for member orders and $142.39 for non-member orders.
 
-What is one follow-up question you'd recommend management investigate?
-Why are members still spending the same amount of money as non-members, as members
-should be getting discounts on select items each promotion period?
+Non-members average 7.52 orders per customer, compared with 5.33 orders
+per customer for members. Average revenue per customer is also higher for
+non-members ($1,070.47) than for members ($755.93).
+
+Total revenue from non-member orders is approximately $10.12 million,
+compared with $4.11 million from member orders.
+
+These results suggest that non-members generate more revenue per customer
+and place more orders on average in this dataset. However, this does not
+establish that membership reduces customer value. The results may be
+influenced by membership join dates, customer tenure, and the way the
+synthetic data was generated. A fair comparison would account for how long
+customers have been members and how long they have been observed.
+
+2. What pattern appears in monthly membership additions from 2021–2025?
+
+Monthly membership additions appear relatively consistent, without a clear
+seasonal pattern across most of the period. Monthly counts generally fall
+within a similar range across years.
+
+The available results are synthetic, so the apparent lack of seasonality
+may reflect the random date-generation process rather than actual retail
+customer behavior.
+
+December 2025 has only four recorded membership additions, substantially
+fewer than most other months. This may reflect the end of the generation
+period or an issue in the date-generation logic and should be investigated
+before drawing conclusions about December seasonality.
+
+3. What follow-up question should management investigate?
+
+Why do active members have fewer orders and lower average revenue per
+customer than non-members, despite having nearly identical average order
+values?
+
+Management should investigate whether membership is associated with
+increased purchase frequency, customer retention, or spending over time.
+The analysis should account for membership tenure and compare customer
+behavior before and after joining.
+
+Management should also evaluate whether promotions influence member
+purchasing behavior. The current results do not establish that members
+receive no benefit from promotions, nor do they show that promotions cause
+higher or lower spending. A separate analysis of promotional purchases,
+discounts, and member versus non-member behavior would help answer this.
 */
