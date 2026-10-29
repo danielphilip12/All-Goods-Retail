@@ -1,4 +1,4 @@
--- Active: 1792176784882@@localhost@5432@allgoods_db
+-- Active: 1792176784882@@localhost@5432
 select * 
 from promotions
 limit 5;
@@ -13,14 +13,14 @@ from orders
 group by used_promotion;
 
 /*
-false	89719
-true	10281
+false	94866
+true	5134
 */
 
 select round(avg(used_promotion::int), 4) * 100
 from orders;
 
--- only about 10.28% of orders used a promotion.
+-- only about 5.13% of orders used a promotion.
 
 -- 2. Total revenue 
 
@@ -29,8 +29,8 @@ from orders
 group by used_promotion;
 
 /*
-Orders with promotions generated a total revenue of $1,741,503.94 overall
-Orders without promotions generated a total revenue of $12,466,258.19 overall.  
+Orders without promotions generated a total revenue of $13,347,207.05 overall
+Orders with promotions generated a total revenue of $875,220.39 overall.  
 */
 
 -- 3. Average Order Value
@@ -40,8 +40,8 @@ from orders
 group by used_promotion;
 
 /*
-The average order value for orders that used promotions is $169.39
-The average order value for orders that did not use promotions is $138.95
+The average order value for orders that used promotions is $170.48
+The average order value for orders that did not use promotions is $140.70
 */
 
 -- 4. Total Gross Profit
@@ -63,8 +63,8 @@ on ppo.order_id = o.order_id
 group by o.used_promotion;
 
 /*
-The total profit for orders that used promotions was $514,038.17
-The total profit for orders that did not use promotions was $4,031,086.08
+The total profit for orders that used promotions was $259,245.04
+The total profit for orders that did not use promotions was $4,315,265.93
 */
 
 -- 5. Average gross profit per order
@@ -78,8 +78,8 @@ left join products p
 on oi.product_id = p.product_id
 group by o.used_promotion;
 /*
-The average gross profit per promoted order is $50.00
-The average gross profit per non-promoted order is $44.93
+The average gross profit per promoted order is $50.50
+The average gross profit per non-promoted order is $45.49
 */
 
 -- 6. Gross Profit Margin
@@ -109,8 +109,8 @@ JOIN profit_by_order pbo
 GROUP BY o.used_promotion;
 
 /*
-The gross profit margin for promoted orders is 29.52%
-The gross profit margin for non-promoted orders is 32.34%
+The gross profit margin for promoted orders is 29.62%
+The gross profit margin for non-promoted orders is 32.33%
 */
 
 /*
@@ -142,16 +142,16 @@ limit 10;
 
 /*
 promotion_id total_orders rank
-PROMO_00054	439	1
-PROMO_00178	266	2
-PROMO_00042	258	3
-PROMO_00070	251	4
-PROMO_00171	231	5
-PROMO_00176	187	6
-PROMO_00002	183	7
-PROMO_00067	180	8
-PROMO_00104	177	9
-PROMO_00099	163	10
+PROMO_00042	104	1
+PROMO_00054	104	2
+PROMO_00009	103	3
+PROMO_00070	97	4
+PROMO_00178	94	5
+PROMO_00067	83	6
+PROMO_00133	81	7
+PROMO_00124	80	8
+PROMO_00098	76	9
+PROMO_00172	76	10
 */
 
 -- 2. Which promotions generate the most revenue
@@ -168,16 +168,16 @@ limit 10;
 
 /*
 promotion_id total_revenue rank
-PROMO_00054	73582.40	1
-PROMO_00178	46450.07	2
-PROMO_00171	41919.58	3
-PROMO_00042	41617.94	4
-PROMO_00070	40864.92	5
-PROMO_00176	31970.76	6
-PROMO_00002	30507.98	7
-PROMO_00067	29565.16	8
-PROMO_00104	29395.72	9
-PROMO_00099	29238.10	10
+PROMO_00054	17959.95	1
+PROMO_00070	17901.22	2
+PROMO_00009	17649.09	3
+PROMO_00042	16537.37	4
+PROMO_00178	14385.30	5
+PROMO_00085	14278.28	6
+PROMO_00133	14248.72	7
+PROMO_00072	13694.06	8
+PROMO_00124	13545.48	9
+PROMO_00068	13021.88	10
 */
 
 -- 3. Which promotions generate the most gross profit
@@ -207,16 +207,16 @@ limit 10;
 
 /*
 promotion_id total_gross_profit rank
-PROMO_00054	23149.63	1
-PROMO_00178	13164.85	2
-PROMO_00171	12854.90	3
-PROMO_00042	12799.45	4
-PROMO_00070	11096.04	5
-PROMO_00002	9627.75	6
-PROMO_00176	9245.48	7
-PROMO_00170	9051.63	8
-PROMO_00067	9009.51	9
-PROMO_00099	8944.74	10
+PROMO_00054	5639.94	1
+PROMO_00009	5277.39	2
+PROMO_00070	5029.71	3
+PROMO_00042	5029.58	4
+PROMO_00085	4277.39	5
+PROMO_00124	4205.43	6
+PROMO_00133	4204.19	7
+PROMO_00178	4167.97	8
+PROMO_00067	3974.54	9
+PROMO_00068	3971.34	10
 */
 
 -- Average order value by promotion
@@ -237,16 +237,16 @@ order by 2 desc
 limit 10;
 
 /*
-PROMO_00046	404.98
-PROMO_00182	237.28
-PROMO_00161	234.79
-PROMO_00077	227.27
-PROMO_00174	225.62
-PROMO_00100	217.45
-PROMO_00025	214.20
-PROMO_00164	209.85
-PROMO_00150	209.42
-PROMO_00118	200.21
+PROMO_00195	283.55
+PROMO_00090	266.05
+PROMO_00154	244.34
+PROMO_00025	242.15
+PROMO_00159	229.25
+PROMO_00021	225.42
+PROMO_00007	225.27
+PROMO_00174	223.03
+PROMO_00018	222.26
+PROMO_00187	220.55
  */
 
 -- Gross profit margin by promotion
@@ -287,16 +287,16 @@ order by 4 desc
 limit 10;
 
 /*
-PROMO_00198	173.55	61.39	35.37
-PROMO_00108	609.01	210.32	34.53
-PROMO_00025	642.59	213.61	33.24
-PROMO_00003	2190.04	726.15	33.16
-PROMO_00136	1811.82	600.66	33.15
-PROMO_00046	404.98	133.38	32.93
-PROMO_00080	7970.99	2621.33	32.89
-PROMO_00015	4625.51	1516.11	32.78
-PROMO_00008	4175.65	1358.17	32.53
-PROMO_00007	3204.16	1039.72	32.45
+PROMO_00082	1888.69	649.59	34.39
+PROMO_00094	114.53	39.00	34.05
+PROMO_00077	1064.19	361.08	33.93
+PROMO_00055	378.14	126.87	33.55
+PROMO_00136	1932.18	641.39	33.20
+PROMO_00025	1695.02	560.83	33.09
+PROMO_00170	5050.49	1647.49	32.62
+PROMO_00145	4895.10	1577.25	32.22
+PROMO_00021	901.67	290.35	32.20
+PROMO_00130	1167.41	375.62	32.18
  */
 
 select * from orders
@@ -380,17 +380,17 @@ group by o.used_promotion;
 
 /*
 used_promotion  total_orders    total_revenue   average_order_value total_gross_profit  avg_gross_profit    gross_profit_margin
-false	89719	12466258.19	138.95	4031086.08	44.93	32.34
-true	10281	1741503.94	169.39	514038.17	50.00	29.52
+false	94866	13347207.05	140.70	4315265.93	45.49	32.33
+true	5134	875220.39	170.48	259245.04	50.50	29.62
 */
 
 -- Part 2: Identify promising individual promotions
 
 -- Which promotions generated the most total gross profit
--- Top 5: 00054, 00178, 00171, 00042, 00070
+-- Top 5: 00054, 00009, 00070, 00042, 00085
 
 -- Which have the highest gross profit margins among promotions with sufficient order volume?
--- Top 5: 00080, 00015, 00008, 00151, 00175
+-- Top 5: 00170, 00145, 00065, 00017, 00002
 
 -- Do the same promotions rank highly on both?
 -- No, although the rankings are similar based on revenue and gross profit, the ranking
@@ -400,9 +400,9 @@ true	10281	1741503.94	169.39	514038.17	50.00	29.52
 -- 3. Business Insights
 -- Revenue
 /*
-The top revenue/profit generating promotion was PROMO_00054. This promotion generated $73,582 of revenue, and $23,149 of gross profit. 
-Although not the highest, it does have a substantial profit margin of 31.46%, which is excellent, considering
-the total number of orders that used this promotion was 439, the highest number of orders for any single promotion. 
+The top revenue/profit generating promotion was PROMO_00054. This promotion generated $17,959.95 of revenue, and $5,639.94 of gross profit. 
+Although not the highest, it does have a substantial profit margin of 31.40%, which is excellent, considering
+the total number of orders that used this promotion was 104, the highest number of orders for any single promotion. 
 */
 
 -- Gross profit margin
@@ -447,69 +447,154 @@ a hypothesis, and further testing would be needed to confirm it.
 */
 
 
-/* 
+/*
 AI Assisted analysis/insights
 
-/*
-SECTION 3: BUSINESS INSIGHTS
+=======================================================
+SECTION 3: UPDATED PROMOTION EFFECTIVENESS FINDINGS
+=======================================================
 
-1. Promotional orders have higher average order values but lower gross
-   profit margins.
+=======================================================
+SECTION 3: UPDATED PROMOTION EFFECTIVENESS FINDINGS
+=======================================================
 
-   Promotional orders averaged $169.39 per order, compared with $138.95
-   for non-promotional orders. Average gross profit per order was also
-   higher for promotional orders ($50.00 vs. $44.93). However, promotional
-   orders had a lower gross profit margin (29.52% vs. 32.34%).
+**1. PROMOTIONAL ORDERS HAVE HIGHER ORDER VALUES AND GROSS
+PROFIT PER ORDER, BUT LOWER GROSS PROFIT MARGINS.**
 
-   Business implication: Promotions are associated with larger orders
-   and higher gross profit per order, but the retailer should evaluate
-   whether the additional sales justify the lower margin.
+Of the 100,000 orders, 5,134 (5.13%) used promotions.
+These orders generated $875,220.39 in revenue and
+$259,245.04 in gross profit.
 
-   Limitation: These are observational comparisons. They do not establish
-   that promotions caused customers to spend more or reduced margins.
+Promotional orders averaged $170.48 in order value,
+compared with $140.70 for non-promotional orders.
+Average gross profit per order was also higher for
+promotional orders ($50.50 versus $45.49).
 
+However, promotional orders had a lower gross profit
+margin (29.62%) than non-promotional orders (32.33%).
 
-2. PROMO_00054 is a strong performer by overall contribution.
+Business implication:
+Promotional orders are associated with larger baskets
+and more gross profit per order, but a smaller share
+of revenue is retained as gross profit. Management
+should evaluate whether the additional order value and
+gross profit justify the lower margin.
 
-   PROMO_00054 generated $73,582.40 in revenue and $23,149.63 in gross
-   profit across 439 orders. Its gross profit margin was approximately
-   31.46%.
-
-   Business implication: Investigate the products, customer behavior,
-   and campaign characteristics associated with this promotion when
-   planning future campaigns.
-
-   Limitation: Historical performance does not guarantee that repeating
-   the promotion will produce the same results.
-
-
-3. Promotion leaders differ depending on the performance metric.
-
-   The promotions with the highest total gross profit are not the same
-   as those with the highest gross profit margins. Total gross profit
-   reflects overall contribution, while gross profit margin measures
-   gross profit relative to revenue.
-
-   Business implication: Evaluate promotions using both total gross
-   profit and gross profit margin rather than selecting campaigns
-   using only one metric.
-
-   Limitation: A high margin alone does not establish that a promotion
-   is commercially successful, especially when its order volume is low.
+Limitation:
+These are observational comparisons. They do not prove
+that promotions caused larger orders or lower margins.
+Differences in product mix, customer behavior, and
+promotion selection may contribute to the results.
 
 
-4. Promotion size may be associated with revenue performance.
+**2. PROMO_00054 IS THE LEADING PROMOTION BY TOTAL
+REVENUE AND TOTAL GROSS PROFIT.**
 
-   The exploratory comparison of promotion duration and the number of
-   associated promotional items suggests that the top revenue-generating
-   promotions tend to include more items than the selected high-margin
-   promotions.
+PROMO_00054 was associated with 104 orders, tied with
+PROMO_00042 for the highest order count among the
+promotions in the current results.
 
-   Business implication: Investigate whether promotion size, product
-   selection, and campaign duration are associated with revenue and
-   profitability before changing promotion strategy.
+It generated $17,959.95 in revenue and $5,639.94 in
+gross profit, ranking first in both total revenue and
+total gross profit among promotions with more than
+20 orders.
 
-   Limitation: This comparison does not establish that increasing the
-   number of promotional items will increase revenue. Other factors,
-   including product popularity and campaign exposure, may contribute.
+Its gross profit margin was 31.40%, ranking eighth
+among the promotions in that filtered comparison.
+This illustrates that the promotion generating the
+most total gross profit does not necessarily have the
+highest gross profit margin.
+
+Business implication:
+Investigate the products, promotion characteristics,
+and customer purchasing behavior associated with
+PROMO_00054 to understand which factors may contribute
+to its strong overall contribution. Evaluate its
+performance alongside its margin rather than relying
+on revenue or total gross profit alone.
+
+Limitation:
+Historical performance does not guarantee that
+repeating the promotion will produce similar results.
+The results also do not establish that the promotion
+caused the observed revenue or profit.
+
+
+**3. THE BEST-PERFORMING PROMOTIONS DIFFER BY METRIC.**
+
+PROMO_00054 ranked first in both revenue ($17,959.95)
+and total gross profit ($5,639.94). PROMO_00070 and
+PROMO_00009 also ranked among the leading promotions
+by total revenue and gross profit.
+
+When considering gross profit margin among promotions
+with more than 20 orders, PROMO_00170 ranked first at
+32.62%, followed by PROMO_00145 at 32.22%,
+PROMO_00065 at 31.81%, and PROMO_00017 at 31.75%.
+
+PROMO_00054 ranked eighth by margin at 31.40%.
+PROMO_00170, the highest-margin promotion in this
+filtered comparison, generated $1,647.49 in gross
+profit across 37 orders—substantially less total gross
+profit than PROMO_00054.
+
+Business implication:
+Evaluate promotions using multiple measures, including
+order volume, revenue, total gross profit, average
+order value, and gross profit margin. High-margin
+promotions may be attractive for profitability, while
+high-volume promotions may contribute more total
+gross profit. The preferred campaign depends on the
+business objective.
+
+Limitation:
+The margin rankings depend on the filter requiring
+more than 20 orders. This reduces the influence of
+very low-volume campaigns but does not eliminate
+uncertainty from differences in sample size, product
+mix, and customer behavior.
+
+
+**4. PROMOTION SIZE MAY BE ASSOCIATED WITH REVENUE
+PERFORMANCE, BUT FURTHER ANALYSIS IS NEEDED.**
+
+The exploratory comparison of promotion duration and
+the number of associated promotional items suggested
+that leading promotions by revenue tended to include
+more items than the selected high-margin promotions.
+
+Business implication:
+Investigate whether the number of promoted items,
+campaign duration, product popularity, and promotion
+selection are associated with revenue and profitability.
+Compare promotions with similar durations and exposure
+where possible to better understand these relationships.
+
+Limitation:
+This comparison does not establish that increasing
+the number of promoted items will increase revenue.
+Product demand, pricing, campaign exposure, and other
+factors may also explain differences in performance.
+
+
+**5. PROMOTION USAGE IS LIMITED IN THE CURRENT DATASET.**
+
+Only 5.13% of orders used a promotion, accounting for
+$875,220.39 of the approximately $14.22 million in
+total order revenue.
+
+Business implication:
+Management could investigate whether the relatively
+low promotion usage reflects a deliberate strategy,
+limited promotion availability, or customer behavior.
+It may be useful to test targeted promotions on
+selected products or customer groups and evaluate
+their effects on total gross profit and margin.
+
+Limitation:
+The synthetic dataset does not establish an optimal
+promotion usage rate or demonstrate how real customers
+would respond to a change in promotion frequency.
+Any proposed changes should be evaluated through
+additional analysis or controlled experiments.
 */

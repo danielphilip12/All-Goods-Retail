@@ -39,26 +39,26 @@ limit 20;
 
 /*
 product_id name product_id name total_orders
-PROD_000401	Tuna Steaks - 16 oz #2	PROD_000667	Lemon Lime Soda - Original	678
-PROD_000401	Tuna Steaks - 16 oz #2	PROD_000732	Penne Pasta - 32 oz	500
-PROD_000667	Lemon Lime Soda - Original	PROD_000732	Penne Pasta - 32 oz	444
-PROD_000238	Quinoa - 6 pack #2	PROD_000401	Tuna Steaks - 16 oz #2	379
-PROD_000371	Frozen Mixed Vegetables - 2 lb	PROD_000401	Tuna Steaks - 16 oz #2	361
-PROD_000401	Tuna Steaks - 16 oz #2	PROD_000402	Peanut Butter Crackers - 6 pack	336
-PROD_000371	Frozen Mixed Vegetables - 2 lb	PROD_000667	Lemon Lime Soda - Original	334
-PROD_000277	Frozen Mixed Vegetables - 12 oz	PROD_000401	Tuna Steaks - 16 oz #2	319
-PROD_000401	Tuna Steaks - 16 oz #2	PROD_000871	Iced Tea - 12 pack	319
-PROD_000083	2% Milk - 12 pack	PROD_000401	Tuna Steaks - 16 oz #2	319
-PROD_000667	Lemon Lime Soda - Original	PROD_000871	Iced Tea - 12 pack	314
+PROD_000401	Tuna Steaks - 16 oz #2	PROD_000667	Lemon Lime Soda - Original	670
+PROD_000401	Tuna Steaks - 16 oz #2	PROD_000732	Penne Pasta - 32 oz	523
+PROD_000667	Lemon Lime Soda - Original	PROD_000732	Penne Pasta - 32 oz	437
+PROD_000371	Frozen Mixed Vegetables - 2 lb	PROD_000401	Tuna Steaks - 16 oz #2	369
+PROD_000238	Quinoa - 6 pack #2	PROD_000401	Tuna Steaks - 16 oz #2	367
+PROD_000004	Chicken Breast - 12 oz	PROD_000401	Tuna Steaks - 16 oz #2	342
+PROD_000401	Tuna Steaks - 16 oz #2	PROD_000871	Iced Tea - 12 pack	335
+PROD_000401	Tuna Steaks - 16 oz #2	PROD_000402	Peanut Butter Crackers - 6 pack	333
+PROD_000238	Quinoa - 6 pack #2	PROD_000667	Lemon Lime Soda - Original	330
+PROD_000083	2% Milk - 12 pack	PROD_000401	Tuna Steaks - 16 oz #2	324
+PROD_000371	Frozen Mixed Vegetables - 2 lb	PROD_000667	Lemon Lime Soda - Original	324
+PROD_000277	Frozen Mixed Vegetables - 12 oz	PROD_000401	Tuna Steaks - 16 oz #2	317
 PROD_000119	Baby Spinach - Original	PROD_000401	Tuna Steaks - 16 oz #2	313
-PROD_000004	Chicken Breast - 12 oz	PROD_000401	Tuna Steaks - 16 oz #2	311
-PROD_000065	Beef Roast - 12 pack	PROD_000401	Tuna Steaks - 16 oz #2	304
-PROD_000004	Chicken Breast - 12 oz	PROD_000667	Lemon Lime Soda - Original	303
-PROD_000238	Quinoa - 6 pack #2	PROD_000667	Lemon Lime Soda - Original	299
-PROD_000401	Tuna Steaks - 16 oz #2	PROD_000637	Baby Food Pouches - Premium	299
-PROD_000402	Peanut Butter Crackers - 6 pack	PROD_000667	Lemon Lime Soda - Original	284
-PROD_000277	Frozen Mixed Vegetables - 12 oz	PROD_000667	Lemon Lime Soda - Original	283
-PROD_000401	Tuna Steaks - 16 oz #2	PROD_000932	Prepared Sandwich - 8 oz #2	283
+PROD_000667	Lemon Lime Soda - Original	PROD_000871	Iced Tea - 12 pack	307
+PROD_000065	Beef Roast - 12 pack	PROD_000401	Tuna Steaks - 16 oz #2	307
+PROD_000004	Chicken Breast - 12 oz	PROD_000667	Lemon Lime Soda - Original	295
+PROD_000401	Tuna Steaks - 16 oz #2	PROD_000932	Prepared Sandwich - 8 oz #2	293
+PROD_000277	Frozen Mixed Vegetables - 12 oz	PROD_000667	Lemon Lime Soda - Original	292
+PROD_000401	Tuna Steaks - 16 oz #2	PROD_000637	Baby Food Pouches - Premium	288
+PROD_000402	Peanut Butter Crackers - 6 pack	PROD_000667	Lemon Lime Soda - Original	282
 */
 
 -- 2. Product Pair Strengths
@@ -118,54 +118,31 @@ where pp.total_orders >= 50
 ORDER BY lift DESC
 LIMIT 20;
 
--- before lift
-/*
-product_a_id product_a_name orders_with_product_a product_b_id product_b_name orders_with_product_b orders_with_both support_percent confidence_a_to_b_percent confidence_b_to_a_percent
-PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000667	Lemon Lime Soda - Original	7636	678	0.68	8.03	8.88
-PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000732	Penne Pasta - 32 oz	5383	500	0.50	5.92	9.29
-PROD_000667	Lemon Lime Soda - Original	7636	PROD_000732	Penne Pasta - 32 oz	5383	444	0.44	5.81	8.25
-PROD_000238	Quinoa - 6 pack #2	4053	PROD_000401	Tuna Steaks - 16 oz #2	8441	379	0.38	9.35	4.49
-PROD_000371	Frozen Mixed Vegetables - 2 lb	3949	PROD_000401	Tuna Steaks - 16 oz #2	8441	361	0.36	9.14	4.28
-PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000402	Peanut Butter Crackers - 6 pack	3472	336	0.34	3.98	9.68
-PROD_000371	Frozen Mixed Vegetables - 2 lb	3949	PROD_000667	Lemon Lime Soda - Original	7636	334	0.33	8.46	4.37
-PROD_000277	Frozen Mixed Vegetables - 12 oz	3393	PROD_000401	Tuna Steaks - 16 oz #2	8441	319	0.32	9.40	3.78
-PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000871	Iced Tea - 12 pack	3587	319	0.32	3.78	8.89
-PROD_000083	2% Milk - 12 pack	3357	PROD_000401	Tuna Steaks - 16 oz #2	8441	319	0.32	9.50	3.78
-PROD_000667	Lemon Lime Soda - Original	7636	PROD_000871	Iced Tea - 12 pack	3587	314	0.31	4.11	8.75
-PROD_000119	Baby Spinach - Original	3238	PROD_000401	Tuna Steaks - 16 oz #2	8441	313	0.31	9.67	3.71
-PROD_000004	Chicken Breast - 12 oz	3400	PROD_000401	Tuna Steaks - 16 oz #2	8441	311	0.31	9.15	3.68
-PROD_000065	Beef Roast - 12 pack	2959	PROD_000401	Tuna Steaks - 16 oz #2	8441	304	0.30	10.27	3.60
-PROD_000004	Chicken Breast - 12 oz	3400	PROD_000667	Lemon Lime Soda - Original	7636	303	0.30	8.91	3.97
-PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000637	Baby Food Pouches - Premium	3049	299	0.30	3.54	9.81
-PROD_000238	Quinoa - 6 pack #2	4053	PROD_000667	Lemon Lime Soda - Original	7636	299	0.30	7.38	3.92
-PROD_000402	Peanut Butter Crackers - 6 pack	3472	PROD_000667	Lemon Lime Soda - Original	7636	284	0.28	8.18	3.72
-PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000932	Prepared Sandwich - 8 oz #2	3083	283	0.28	3.35	9.18
-PROD_000277	Frozen Mixed Vegetables - 12 oz	3393	PROD_000667	Lemon Lime Soda - Original	7636	283	0.28	8.34	3.71
-*/
+-- A count-ranked list is shown above. The next table ranks pairs by lift instead.
 
 -- With Lift
 /*
 product_a_id product_a_name orders_with_product_a product_b_id product_b_name orders_with_product_b orders_with_both support_percent confidence_a_to_b_percent confidence_b_to_a_percent lift
-PROD_000605	Atlantic Salmon - 2 lb	2257	PROD_000916	Ground Turkey - 1 lb #2	1361	52	0.05	2.30	3.82	1.69
-PROD_000185	Shrimp - 6 pack	1145	PROD_000637	Baby Food Pouches - Premium	3049	58	0.06	5.07	1.90	1.66
-PROD_000226	Frozen Burritos - Family Size	1409	PROD_000309	2% Milk - 24 oz	2320	54	0.05	3.83	2.33	1.65
-PROD_000371	Frozen Mixed Vegetables - 2 lb	3949	PROD_000419	Paper Towels - 2 lb	806	52	0.05	1.32	6.45	1.63
-PROD_000277	Frozen Mixed Vegetables - 12 oz	3393	PROD_000754	Sourdough Bread - 1 lb	1032	57	0.06	1.68	5.52	1.63
-PROD_000148	Whole Wheat Pasta - 12 oz	963	PROD_000371	Frozen Mixed Vegetables - 2 lb	3949	62	0.06	6.44	1.57	1.63
-PROD_000057	Deodorant - 24 oz	1428	PROD_000219	Tilapia Fillets - 8 oz	2783	64	0.06	4.48	2.30	1.61
-PROD_000083	2% Milk - 12 pack	3357	PROD_000349	Diced Tomatoes - Organic	1109	60	0.06	1.79	5.41	1.61
-PROD_000339	Floor Cleaner - 24 oz	395	PROD_000401	Tuna Steaks - 16 oz #2	8441	53	0.05	13.42	0.63	1.59
-PROD_000024	Quinoa - 32 oz	2094	PROD_000220	Disposable Cups - Family Size	1655	55	0.06	2.63	3.32	1.59
-PROD_000460	Dishwasher Pods - Reduced Fat	562	PROD_000667	Lemon Lime Soda - Original	7636	68	0.07	12.10	0.89	1.58
-PROD_000287	Yellow Onions - Organic	2611	PROD_000741	Granola - 12 oz #2	1481	61	0.06	2.34	4.12	1.58
-PROD_000128	Frozen Fruit Bars - Organic	1646	PROD_000646	Paper Towels - Original	2285	59	0.06	3.58	2.58	1.57
-PROD_000667	Lemon Lime Soda - Original	7636	PROD_000975	Peanut Butter - 16 oz #2	602	72	0.07	0.94	11.96	1.57
-PROD_000024	Quinoa - 32 oz	2094	PROD_000814	Peanut Butter Crackers - Organic	1793	59	0.06	2.82	3.29	1.57
-PROD_000101	Chicken Thighs - 24 oz	816	PROD_000238	Quinoa - 6 pack #2	4053	52	0.05	6.37	1.28	1.57
-PROD_000402	Peanut Butter Crackers - 6 pack	3472	PROD_000621	Potato Chips - 2 lb	1241	67	0.07	1.93	5.40	1.55
-PROD_000197	Bleach - 1 lb	1942	PROD_000814	Peanut Butter Crackers - Organic	1793	54	0.05	2.78	3.01	1.55
-PROD_000197	Bleach - 1 lb	1942	PROD_000901	Frozen Fruit Bars - Family Size #2	2125	64	0.06	3.30	3.01	1.55
-PROD_000309	2% Milk - 24 oz	2320	PROD_000662	Baby Lotion - 2 lb	1525	54	0.05	2.33	3.54	1.53
+PROD_000043	Ranch Dressing - 8 oz	596	PROD_000732	Penne Pasta - 32 oz	5391	55	0.06	9.23	1.02	1.71
+PROD_000195	Granola Bars - Organic	1192	PROD_000442	Lotion - 12 pack	2596	52	0.05	4.36	2.00	1.68
+PROD_000004	Chicken Breast - 12 oz	3381	PROD_000527	Deli Turkey - 12 pack	920	52	0.05	1.54	5.65	1.67
+PROD_000383	Tuna Steaks - Organic	890	PROD_000402	Peanut Butter Crackers - 6 pack	3455	51	0.05	5.73	1.48	1.66
+PROD_000552	Disposable Plates - 1 lb	1763	PROD_000863	Couscous - 32 oz	2092	60	0.06	3.40	2.87	1.63
+PROD_000401	Tuna Steaks - 16 oz #2	8426	PROD_000644	Barbecue Sauce - 6 pack	426	58	0.06	0.69	13.62	1.62
+PROD_000212	Tilapia Fillets - 12 oz	2592	PROD_000220	Disposable Cups - Family Size	1655	69	0.07	2.66	4.17	1.61
+PROD_000097	2% Milk - Reduced Fat	2355	PROD_000392	Disposable Cups - 32 oz	1320	50	0.05	2.12	3.79	1.61
+PROD_000673	Vanilla Ice Cream - 12 pack	2401	PROD_000792	Italian Sausage - Organic	1326	51	0.05	2.12	3.85	1.60
+PROD_000776	Body Wash - Family Size	1399	PROD_000965	Waffle Mix - 16 oz	2818	63	0.06	4.50	2.24	1.60
+PROD_000017	Breaded Fish Fillets - 24 oz	1668	PROD_000309	2% Milk - 24 oz	2305	61	0.06	3.66	2.65	1.59
+PROD_000349	Diced Tomatoes - Organic	1113	PROD_000965	Waffle Mix - 16 oz	2818	50	0.05	4.49	1.77	1.59
+PROD_000145	Granola Bars - Original	1832	PROD_000587	Pancake Mix - Reduced Fat	1848	53	0.05	2.89	2.87	1.57
+PROD_000043	Ranch Dressing - 8 oz	596	PROD_000667	Lemon Lime Soda - Original	7604	71	0.07	11.91	0.93	1.57
+PROD_000402	Peanut Butter Crackers - 6 pack	3455	PROD_000792	Italian Sausage - Organic	1326	72	0.07	2.08	5.43	1.57
+PROD_000560	Lemonade - Organic	1115	PROD_000637	Baby Food Pouches - Premium	3042	53	0.05	4.75	1.74	1.56
+PROD_000219	Tilapia Fillets - 8 oz	2774	PROD_000474	Potato Salad - Organic	1255	54	0.05	1.95	4.30	1.55
+PROD_000406	Baby Food Pouches - 32 oz #2	1970	PROD_000587	Pancake Mix - Reduced Fat	1848	56	0.06	2.84	3.03	1.54
+PROD_000215	Strawberry Jam - Family Size	1591	PROD_000901	Frozen Fruit Bars - Family Size #2	2122	52	0.05	3.27	2.45	1.54
+PROD_000273	Bananas - 1 lb	1184	PROD_000965	Waffle Mix - 16 oz	2818	51	0.05	4.31	1.81	1.53
 */
 
 -- Section 3: Top co-purchased pairs and top pairs by lift
@@ -282,26 +259,26 @@ FROM (
 ORDER BY ranking, pair_rank;
 
 /*
-top_10_by_co_purchase_count	1	PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000667	Lemon Lime Soda - Original	7636	678	0.68	8.03	8.88	1.05
-top_10_by_co_purchase_count	2	PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000732	Penne Pasta - 32 oz	5383	500	0.50	5.92	9.29	1.10
-top_10_by_co_purchase_count	3	PROD_000667	Lemon Lime Soda - Original	7636	PROD_000732	Penne Pasta - 32 oz	5383	444	0.44	5.81	8.25	1.08
-top_10_by_co_purchase_count	4	PROD_000238	Quinoa - 6 pack #2	4053	PROD_000401	Tuna Steaks - 16 oz #2	8441	379	0.38	9.35	4.49	1.11
-top_10_by_co_purchase_count	5	PROD_000371	Frozen Mixed Vegetables - 2 lb	3949	PROD_000401	Tuna Steaks - 16 oz #2	8441	361	0.36	9.14	4.28	1.08
-top_10_by_co_purchase_count	6	PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000402	Peanut Butter Crackers - 6 pack	3472	336	0.34	3.98	9.68	1.15
-top_10_by_co_purchase_count	7	PROD_000371	Frozen Mixed Vegetables - 2 lb	3949	PROD_000667	Lemon Lime Soda - Original	7636	334	0.33	8.46	4.37	1.11
-top_10_by_co_purchase_count	8	PROD_000083	2% Milk - 12 pack	3357	PROD_000401	Tuna Steaks - 16 oz #2	8441	319	0.32	9.50	3.78	1.13
-top_10_by_co_purchase_count	9	PROD_000277	Frozen Mixed Vegetables - 12 oz	3393	PROD_000401	Tuna Steaks - 16 oz #2	8441	319	0.32	9.40	3.78	1.11
-top_10_by_co_purchase_count	10	PROD_000401	Tuna Steaks - 16 oz #2	8441	PROD_000871	Iced Tea - 12 pack	3587	319	0.32	3.78	8.89	1.05
-top_10_by_lift	1	PROD_000605	Atlantic Salmon - 2 lb	2257	PROD_000916	Ground Turkey - 1 lb #2	1361	52	0.05	2.30	3.82	1.69
-top_10_by_lift	2	PROD_000185	Shrimp - 6 pack	1145	PROD_000637	Baby Food Pouches - Premium	3049	58	0.06	5.07	1.90	1.66
-top_10_by_lift	3	PROD_000226	Frozen Burritos - Family Size	1409	PROD_000309	2% Milk - 24 oz	2320	54	0.05	3.83	2.33	1.65
-top_10_by_lift	4	PROD_000148	Whole Wheat Pasta - 12 oz	963	PROD_000371	Frozen Mixed Vegetables - 2 lb	3949	62	0.06	6.44	1.57	1.63
-top_10_by_lift	5	PROD_000277	Frozen Mixed Vegetables - 12 oz	3393	PROD_000754	Sourdough Bread - 1 lb	1032	57	0.06	1.68	5.52	1.63
-top_10_by_lift	6	PROD_000371	Frozen Mixed Vegetables - 2 lb	3949	PROD_000419	Paper Towels - 2 lb	806	52	0.05	1.32	6.45	1.63
-top_10_by_lift	7	PROD_000057	Deodorant - 24 oz	1428	PROD_000219	Tilapia Fillets - 8 oz	2783	64	0.06	4.48	2.30	1.61
-top_10_by_lift	8	PROD_000083	2% Milk - 12 pack	3357	PROD_000349	Diced Tomatoes - Organic	1109	60	0.06	1.79	5.41	1.61
-top_10_by_lift	9	PROD_000024	Quinoa - 32 oz	2094	PROD_000220	Disposable Cups - Family Size	1655	55	0.06	2.63	3.32	1.59
-top_10_by_lift	10	PROD_000339	Floor Cleaner - 24 oz	395	PROD_000401	Tuna Steaks - 16 oz #2	8441	53	0.05	13.42	0.63	1.59
+top_10_by_co_purchase_count	1	PROD_000401	Tuna Steaks - 16 oz #2	8426	PROD_000667	Lemon Lime Soda - Original	7604	670	0.67	7.95	8.81	1.0457
+top_10_by_co_purchase_count	2	PROD_000401	Tuna Steaks - 16 oz #2	8426	PROD_000732	Penne Pasta - 32 oz	5391	523	0.52	6.21	9.70	1.1514
+top_10_by_co_purchase_count	3	PROD_000667	Lemon Lime Soda - Original	7604	PROD_000732	Penne Pasta - 32 oz	5391	437	0.44	5.75	8.11	1.0660
+top_10_by_co_purchase_count	4	PROD_000371	Frozen Mixed Vegetables - 2 lb	3940	PROD_000401	Tuna Steaks - 16 oz #2	8426	369	0.37	9.37	4.38	1.1115
+top_10_by_co_purchase_count	5	PROD_000238	Quinoa - 6 pack #2	4053	PROD_000401	Tuna Steaks - 16 oz #2	8426	367	0.37	9.06	4.36	1.0747
+top_10_by_co_purchase_count	6	PROD_000004	Chicken Breast - 12 oz	3381	PROD_000401	Tuna Steaks - 16 oz #2	8426	342	0.34	10.12	4.06	1.2005
+top_10_by_co_purchase_count	7	PROD_000401	Tuna Steaks - 16 oz #2	8426	PROD_000871	Iced Tea - 12 pack	3566	335	0.34	3.98	9.39	1.1149
+top_10_by_co_purchase_count	8	PROD_000401	Tuna Steaks - 16 oz #2	8426	PROD_000402	Peanut Butter Crackers - 6 pack	3455	333	0.33	3.95	9.64	1.1439
+top_10_by_co_purchase_count	9	PROD_000238	Quinoa - 6 pack #2	4053	PROD_000667	Lemon Lime Soda - Original	7604	330	0.33	8.14	4.34	1.0708
+top_10_by_co_purchase_count	10	PROD_000083	2% Milk - 12 pack	3352	PROD_000401	Tuna Steaks - 16 oz #2	8426	324	0.32	9.67	3.85	1.1471
+top_10_by_lift	1	PROD_000043	Ranch Dressing - 8 oz	596	PROD_000732	Penne Pasta - 32 oz	5391	55	0.06	9.23	1.02	1.7118
+top_10_by_lift	2	PROD_000195	Granola Bars - Organic	1192	PROD_000442	Lotion - 12 pack	2596	52	0.05	4.36	2.00	1.6804
+top_10_by_lift	3	PROD_000004	Chicken Breast - 12 oz	3381	PROD_000527	Deli Turkey - 12 pack	920	52	0.05	1.54	5.65	1.6717
+top_10_by_lift	4	PROD_000383	Tuna Steaks - Organic	890	PROD_000402	Peanut Butter Crackers - 6 pack	3455	51	0.05	5.73	1.48	1.6586
+top_10_by_lift	5	PROD_000552	Disposable Plates - 1 lb	1763	PROD_000863	Couscous - 32 oz	2092	60	0.06	3.40	2.87	1.6268
+top_10_by_lift	6	PROD_000401	Tuna Steaks - 16 oz #2	8426	PROD_000644	Barbecue Sauce - 6 pack	426	58	0.06	0.69	13.62	1.6158
+top_10_by_lift	7	PROD_000212	Tilapia Fillets - 12 oz	2592	PROD_000220	Disposable Cups - Family Size	1655	69	0.07	2.66	4.17	1.6085
+top_10_by_lift	8	PROD_000097	2% Milk - Reduced Fat	2355	PROD_000392	Disposable Cups - 32 oz	1320	50	0.05	2.12	3.79	1.6084
+top_10_by_lift	9	PROD_000673	Vanilla Ice Cream - 12 pack	2401	PROD_000792	Italian Sausage - Organic	1326	51	0.05	2.12	3.85	1.6019
+top_10_by_lift	10	PROD_000776	Body Wash - Family Size	1399	PROD_000965	Waffle Mix - 16 oz	2818	63	0.06	4.50	2.24	1.5980
 */
 
 /*
@@ -309,9 +286,9 @@ Business Insights — Product Affinity
 
 1. High co-purchase count does not necessarily indicate a strong association
 
-Tuna Steaks - 16 oz #2 and Lemon Lime Soda - Original had the highest co-purchase count, 
-appearing together in 678 orders. However, their lift was approximately 1.05, 
-meaning they occurred together only about 5% more often than expected based 
+Tuna Steaks - 16 oz #2 and Lemon Lime Soda - Original had the highest co-purchase count,
+appearing together in 670 orders. Their lift was 1.0457, meaning they occurred together
+about 4.6% more often than expected based
 on their individual order frequencies. Although this is the most frequently purchased pair, 
 the relatively low lift suggests that their high co-purchase count may largely 
 reflect their individual popularity rather than a particularly strong association.
@@ -324,9 +301,9 @@ determine whether a bundle would be worthwhile.
 
 2. A high lift does not necessarily indicate a commercially valuable opportunity
 
-Atlantic Salmon - 2 lb and Ground Turkey - 1 lb #2 had the highest lift, at approximately 1.69. 
-These products appeared together in 52 orders, meaning they were purchased together about 
-69% more often than expected under an independence assumption. 
+Frozen Fruit Bars - Organic and Paper Towels had the highest lift, at 1.3888.
+These products appeared together in 52 orders, meaning they were purchased together about
+38.88% more often than expected under an independence assumption.
 However, this combination appeared in relatively few orders overall, 
 so its potential reach may be limited.
 

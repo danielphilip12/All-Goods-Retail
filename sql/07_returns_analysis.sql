@@ -35,26 +35,26 @@ We do not have a column telling us the reason for return.
 select count(*) as total_returns
 from returns;
 
--- 42480
+-- 42,236
 
 -- 2. How much money has been refunded
 select sum(refund_amount) as total_refunded
 from returns;
 
--- $766,142.71
+-- $759,940.74
 
 -- 3. What percentage of orders have at least one return?
 select 
     round((count(distinct order_id) * 100.0 / (select count(distinct order_id) from orders)), 2) as return_percentage
 from returns;
 
--- 34.03%
+-- 33.83%
 
 -- 4. How many units have been returned?
 select sum(quantity_returned) as total_units_returned
 from returns;
 
--- 85,228
+-- 84,504
 
 -- =============================
 -- Section 2: Return Overview
@@ -78,18 +78,18 @@ left join product_returns pr
 on p.product_id = pr.product_id
 order by 2 desc;
 
--- Top 5 refunded products
+-- Top 5 products by returned units
 /*
-Tuna Steaks - 16 oz #2	    1357
-Penne Pasta - 32 oz	        922
-Quinoa - 6 pack #2	        709
-Lemon Lime Soda - Original	639
-Baby Food Pouches - Premium	595
+Tuna Steaks - 16 oz #2	1296
+Penne Pasta - 32 oz	887
+Lemon Lime Soda - Original	711
+Quinoa - 6 pack #2	640
+Baby Food Pouches - Premium	639
 */
 
--- Tuna Steaks - 16oz #2 has the most returns of any product, being returned 1,357 times. 
--- According to the products sales analysis, this product was the most profitable,
--- so we may need to rectify that if the returns counter the profit. 
+-- Tuna Steaks - 16 oz #2 has the most returned units at 1,296. Its return rate is
+-- 5.15%; assess its $21,340.22 in refunds against its sales and profit before
+-- deciding whether the return volume warrants intervention.
 
 -- 2. Which products has the highest refunded amounts?
 
@@ -112,11 +112,11 @@ order by 2 desc;
 
 -- Top 5 refunded products and amounts
 /*
-Tuna Steaks - 16 oz #2	    22322.00
-Baby Food Pouches - Premium	14669.00
-Penne Pasta - 32 oz	        8976.03
-Baby Lotion - 2 lb	        8645.21
-Atlantic Salmon - 2 lb	    8290.59
+Tuna Steaks - 16 oz #2	21340.22
+Baby Food Pouches - Premium	15780.86
+Penne Pasta - 32 oz	8725.83
+Baby Lotion - 2 lb	8566.40
+Atlantic Salmon - 2 lb	8328.24
 */
 
 -- 3. Which products have the highest return rates relative to sales?
@@ -157,16 +157,16 @@ order by return_rate_percentage desc, total_quantity_returned desc;
 
 /*
 Top 5 products by return rate (descending) where quantity sold is >= 100
-PROD_000190	Baby Diapers - 12 pack	210	33	15.71
-PROD_000483	Toilet Paper - 6 pack #2	410	48	11.71
-PROD_000224	Baby Wipes - Organic	884	99	11.20
-PROD_000059	Floor Cleaner - Premium	181	20	11.05
-PROD_000293	Soy Sauce - 8 oz	306	33	10.78
+PROD_000042	Shampoo - 12 oz	139	19	13.67
+PROD_000214	Paper Napkins - Premium #2	350	43	12.29
+PROD_000677	Chocolate Ice Cream - Original	152	18	11.84
+PROD_000592	Disposable Cups - 1 lb #2	258	29	11.24
+PROD_000706	Facial Tissues - Premium #2	211	23	10.90
 */
 
 /*
-The tuna steaks, which have the highest number of quantity sold (25,217) and the most returns (1,357), has
-a very low return rate of 5.38%. 
+The tuna steaks, which have the highest number of quantity sold (25,181) and the most returns (1,296), has
+a very low return rate of 5.15%. 
 */
 
 
@@ -190,14 +190,14 @@ group by c.product_category_id, c.name
 order by total_quantity_returned desc, c.product_category_id;
 
 /*
-Seafood has the most returned units at 8407. Top 5 categories by returned units are listed below.
+Seafood has the most returned units at 8334. Top 5 categories by returned units are listed below.
 
 product_category_id	category_name	total_quantity_returned
-CAT_003	Seafood	8407
-CAT_015	Paper Products	7178
-CAT_011	Pasta & Grains	6121
-CAT_008	Snacks	5751
-CAT_005	Bakery	5362
+CAT_003	Seafood	8334
+CAT_015	Paper Products	6993
+CAT_011	Pasta & Grains	6089
+CAT_008	Snacks	5795
+CAT_018	Baby Products	5204
 */
 
 
@@ -217,15 +217,15 @@ group by c.product_category_id, c.name
 order by total_amount_returned desc, c.product_category_id;
 
 /*
-Seafood has the highest return amount, with a total return value of $130,093.30.
+Seafood has the highest return amount, with a total return value of $128,362.58
 
 Top 5 categories by return amount are listed below.
 product_category_id	category_name	total_amount_returned
-CAT_003	Seafood	130093.30
-CAT_018	Baby Products	101978.20
-CAT_015	Paper Products	74439.52
-CAT_002	Meat	50326.66
-CAT_016	Personal Care	41084.42
+CAT_003	Seafood	128362.58
+CAT_018	Baby Products	98389.12
+CAT_015	Paper Products	71839.77
+CAT_002	Meat	51528.33
+CAT_016	Personal Care	41218.36
 */
 
 -- 3. Which categories have the highest return rates?
@@ -271,15 +271,15 @@ order by return_rate_percentage desc, total_quantity_returned desc,
     cs.product_category_id;
 
 /*
-The category with the highest return rate is Paper Products, with a return rate of 6.96%
+Pet Supplies has the highest category unit return rate at 6.99%.
 
 Top 5 categories by return rate are listed below.
 product_category_id	category_name	total_quantity_sold	total_quantity_returned	return_rate_percentage
-CAT_015	Paper Products	103068	7178	6.96
-CAT_018	Baby Products	78046	5355	6.86
-CAT_017	Pet Supplies	36112	2465	6.83
-CAT_016	Personal Care	74411	5069	6.81
-CAT_014	Household Cleaning	53053	3556	6.70
+CAT_017	Pet Supplies	36329	2539	6.99
+CAT_015	Paper Products	102602	6993	6.82
+CAT_016	Personal Care	74595	5038	6.75
+CAT_018	Baby Products	78183	5204	6.66
+CAT_014	Household Cleaning	53057	3445	6.49
 */
 
 -- 4. Paper Products and Baby Products return rates by product.
@@ -332,20 +332,20 @@ order by ps.category_name, return_rate_rank, ps.product_id;
 /*
 Top 5 products by return rate within Paper Products and Baby Products categories.
 product_category_id	category_name	return_rate_rank	product_id	product_name	total_quantity_sold	total_quantity_returned	return_rate_percentage
-CAT_018	Baby Products	1	PROD_000190	Baby Diapers - 12 pack	210	33	15.71
-CAT_018	Baby Products	2	PROD_000224	Baby Wipes - Organic	884	99	11.20
-CAT_018	Baby Products	3	PROD_000156	Baby Food Pouches - Reduced Fat	889	88	9.90
-CAT_018	Baby Products	4	PROD_000096	Baby Food Pouches - 2 lb	624	60	9.62
-CAT_018	Baby Products	5	PROD_000006	Baby Wipes - Reduced Fat	408	39	9.56
+CAT_018	Baby Products	1	PROD_000489	Baby Lotion - 1 lb	508	49	9.65
+CAT_018	Baby Products	2	PROD_000204	Baby Wipes - 8 oz #2	131	12	9.16
+CAT_018	Baby Products	3	PROD_000612	Baby Shampoo - 12 pack	1852	166	8.96
+CAT_018	Baby Products	4	PROD_000062	Baby Shampoo - 16 oz	380	34	8.95
+CAT_018	Baby Products	5	PROD_000034	Baby Diapers - Organic	883	76	8.61
 
-CAT_015	Paper Products	1	PROD_000879	Trash Bags - 16 oz	61	9	14.75
-CAT_015	Paper Products	2	PROD_000483	Toilet Paper - 6 pack #2	410	48	11.71
-CAT_015	Paper Products	3	PROD_000013	Disposable Plates - 12 oz	351	35	9.97
-CAT_015	Paper Products	4	PROD_000317	Paper Towels - Organic	955	90	9.42
-CAT_015	Paper Products	5	PROD_000398	Trash Bags - Family Size	135	12	8.89
+CAT_015	Paper Products	1	PROD_000214	Paper Napkins - Premium #2	350	43	12.29
+CAT_015	Paper Products	2	PROD_000592	Disposable Cups - 1 lb #2	258	29	11.24
+CAT_015	Paper Products	3	PROD_000706	Facial Tissues - Premium #2	211	23	10.90
+CAT_015	Paper Products	4	PROD_000991	Facial Tissues - 24 oz	540	53	9.81
+CAT_015	Paper Products	5	PROD_000920	Paper Towels - 24 oz #2	350	32	9.14
 
-In baby products, baby diapers has the highest return rate among the top 5 products, with a return rate of 15.71%.
-In paper products, trash bags - 16 oz has the highest return rate among the top 5 products, with a return rate of 14.75%.
+Baby Lotion - 1 lb has the highest return rate among the listed Baby Products at 9.65%.
+Paper Napkins - Premium #2 has the highest return rate among the listed Paper Products at 12.29%.
 */
 
 
@@ -355,15 +355,10 @@ In paper products, trash bags - 16 oz has the highest return rate among the top 
 
 -- 1. Seafood
 /*
-The Seafood category has the highest number of returned units and the
-highest total refund amount. However, Seafood also has the highest
-sales volume and revenue, which may help explain its high absolute
-return totals.
-
-Despite its high return volume, Seafood's unit return rate is
-approximately 5%, lower than that of several other categories.
-This suggests that its high return totals may be partly attributable
-to the scale of its sales rather than an unusually high return rate.
+Seafood has the highest number of returned units (8,334) and the
+highest total refund amount ($128,362.58). Its unit return rate is
+5.26%, below the rates for 11 other categories, so its high absolute
+return totals do not correspond to the highest category return rate.
 
 Business implication:
 We should evaluate Seafood's returns alongside its gross profit and
@@ -377,16 +372,16 @@ assessment of the profit impact and appropriate business targets.
 
 -- 2. Paper Products
 /*
-Paper Products has the highest category-level unit return rate at
-6.96%. The five products with the highest return rates in this
-category are Trash Bags - 16 oz, Toilet Paper - 6 pack #2,
-Disposable Plates - 12 oz, Paper Towels - Organic, and Trash Bags -
-Family Size.
+Paper Products has the second-highest category-level unit return rate
+at 6.82%. The five products with the highest return rates in this
+category are Paper Napkins - Premium #2, Disposable Cups - 1 lb #2,
+Facial Tissues - Premium #2, Facial Tissues - 24 oz, and Paper Towels -
+24 oz #2.
 
-Several of these products sold fewer than 500 units in the dataset.
-Trash Bags - 16 oz had 61 units sold and 9 units returned, resulting
-in a 14.75% return rate. Because of its low sales volume, this rate
-should be interpreted cautiously.
+The top three products sold fewer than 500 units. Paper Napkins -
+Premium #2 had 350 units sold and 43 units returned, resulting in a
+12.29% return rate. Interpret product-level rates in light of sales
+volume.
 
 Business implication:
 Investigate whether the elevated return rates are concentrated in
@@ -403,15 +398,14 @@ established that promotions contribute to higher return rates.
 
 -- 3. Baby Products
 /*
-Baby Products has the second-highest category-level unit return rate
-at 6.86%. The five products with the highest return rates in this
-category are Baby Diapers - 12 pack, Baby Wipes - Organic,
-Baby Food Pouches - Reduced Fat, Baby Food Pouches - 2 lb,
-and Baby Wipes - Reduced Fat.
+Baby Products has the fourth-highest category-level unit return rate
+at 6.66%. The five products with the highest return rates in this
+category are Baby Lotion - 1 lb, Baby Wipes - 8 oz #2,
+Baby Shampoo - 12 pack, Baby Shampoo - 16 oz, and Baby Diapers -
+Organic.
 
-Baby Diapers - 12 pack had 210 units sold and 33 units returned,
-resulting in a 15.71% return rate. Because of its relatively low
-sales volume, this rate should be interpreted cautiously.
+Baby Lotion - 1 lb had 508 units sold and 49 units returned,
+resulting in a 9.65% return rate.
 
 Business implication:
 Investigate whether elevated return rates are concentrated in
